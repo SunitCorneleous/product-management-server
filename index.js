@@ -14,7 +14,6 @@ app.get("/", (req, res) => {
 });
 
 // mongodb config
-
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.jjvalws.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
@@ -24,7 +23,18 @@ const client = new MongoClient(uri, {
 });
 
 async function run() {
+  const productsCollection = client
+    .db("productManagement")
+    .collection("products");
   try {
+    // add products to database
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+
+      const result = await productsCollection.insertOne(product);
+
+      res.send(result);
+    });
   } finally {
     //
   }
