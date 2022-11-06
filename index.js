@@ -36,12 +36,44 @@ async function run() {
       res.send(result);
     });
 
+    //get specific product by id
+    app.get("/products/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const query = { _id: ObjectId(id) };
+
+      const result = await productsCollection.findOne(query);
+
+      res.send(result);
+    });
+
     // add products to database
     app.post("/products", async (req, res) => {
       const product = req.body;
 
       const result = await productsCollection.insertOne(product);
 
+      res.send(result);
+    });
+
+    // update product
+    app.put("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const options = { upsert: true };
+
+      const product = req.body;
+      const updatedDoc = {
+        $set: product,
+      };
+
+      const result = await productsCollection.updateOne(
+        query,
+        updatedDoc,
+        options
+      );
+
+      console.log(result);
       res.send(result);
     });
 
